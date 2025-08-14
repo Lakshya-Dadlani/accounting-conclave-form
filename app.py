@@ -36,6 +36,7 @@ def send_email(to_email, subject, body_html):
         print(f"Email sending failed: {e}")
         return False
 
+@app.route("/", methods=["GET", "POST"])
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -53,7 +54,11 @@ def register():
         # Save to Excel
         wb = load_workbook(EXCEL_FILE)
         ws = wb.active
-        ws.append([student_type, ticket_type, price, name, email, phone, institution, panel, diet, special])
+        ws.append([
+            student_type, ticket_type, price,
+            name, email, phone, institution,
+            panel, diet, special
+        ])
         wb.save(EXCEL_FILE)
 
         # Email to participant
