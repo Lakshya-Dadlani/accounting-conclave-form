@@ -16,8 +16,8 @@ if not os.path.exists(EXCEL_FILE):
 
 # Resend API setup
 resend.api_key = os.getenv("RESEND_API_KEY")
-EMAIL_SENDER = os.getenv("EMAIL_SENDER")  # e.g. onboarding@resend.dev
-EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER")  # where admin gets notifications
+EMAIL_SENDER = os.getenv("EMAIL_SENDER")
+EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER")
 
 def send_email(to_email, subject, body_html):
     """Send email using Resend"""
@@ -33,8 +33,14 @@ def send_email(to_email, subject, body_html):
         print(f"Email sending failed: {e}")
         return False
 
-@app.route("/", methods=["GET", "POST"])
-def index():
+# -------------------- Routes --------------------
+
+@app.route("/")
+def home():
+    return render_template("home.html")
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
     if request.method == "POST":
         name = request.form["name"]
         email = request.form["email"]
@@ -70,7 +76,27 @@ def index():
 
         return redirect(url_for("success"))
 
-    return render_template("index.html")
+    return render_template("register.html")
+
+@app.route("/pricing")
+def pricing():
+    return render_template("pricing.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
+
+@app.route("/terms")
+def terms():
+    return render_template("terms.html")
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
 
 @app.route("/success")
 def success():

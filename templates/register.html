@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Registration Form</h2>
+<form method="POST" class="mt-4">
+    <div class="mb-3">
+        <label>Name</label>
+        <input type="text" name="name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Email</label>
+        <input type="email" name="email" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Phone</label>
+        <input type="text" name="phone" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Institution</label>
+        <input type="text" name="institution" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Panel Preference</label>
+        <select name="panel" class="form-control" required>
+            <option value="">Select</option>
+            <option>Forensic Accounting & Beyond CA</option>
+            <option>IFRS and Outsourcing</option>
+            <option>All 4 Panels</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Submit</button>
+</form>
+{% endblock %}
