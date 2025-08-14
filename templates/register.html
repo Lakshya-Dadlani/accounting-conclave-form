@@ -1,32 +1,144 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Registration Form</h2>
-<form method="POST" class="mt-4">
-    <div class="mb-3">
-        <label>Name</label>
-        <input type="text" name="name" class="form-control" required>
+<h2 class="mb-4">Accounting Conclave 2025 - Registration</h2>
+
+<form method="POST" id="regForm">
+
+  <!-- Step 1: Student Type -->
+  <div class="step">
+    <h4>Step 1: Are you an Ahmedabad University student?</h4>
+    <select name="student_type" id="student_type" class="form-select" required onchange="updatePricing()">
+      <option value="">Select...</option>
+      <option value="Ahmedabad University Student">Yes</option>
+      <option value="Non-Ahmedabad University Student">No</option>
+    </select>
+  </div>
+
+  <!-- Step 2: Ticket Type -->
+  <div class="step">
+    <h4>Step 2: Select your ticket type</h4>
+    <select name="ticket_type" id="ticket_type" class="form-select" required onchange="updatePriceValue()">
+      <option value="">Select...</option>
+      <option value="Full Day (All 4 Panels)">Full Day (All 4 Panels)</option>
+      <option value="Half Day Morning (Forensic & Beyond CA)">Half Day Morning (Forensic & Beyond CA)</option>
+      <option value="Half Day Afternoon (IFRS & Outsourcing)">Half Day Afternoon (IFRS & Outsourcing)</option>
+    </select>
+    <p class="mt-2"><b>Price: ₹<span id="price_display">0</span></b></p>
+    <input type="hidden" name="price" id="price">
+  </div>
+
+  <!-- Step 3: Personal Details -->
+  <div class="step">
+    <h4>Step 3: Personal Details</h4>
+    <input type="text" name="name" class="form-control mb-2" placeholder="Full Name" required>
+    <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
+    <input type="tel" name="phone" class="form-control mb-2" placeholder="Phone Number" required>
+    <input type="text" name="institution" class="form-control mb-2" placeholder="Institution / Organisation" required>
+  </div>
+
+  <!-- Step 4: Preferences -->
+  <div class="step">
+    <h4>Step 4: Preferences</h4>
+    <select name="panel" class="form-select mb-2" required>
+      <option value="">Select Panel Preference</option>
+      <option value="Forensic & Beyond CA">Forensic & Beyond CA</option>
+      <option value="IFRS & Outsourcing">IFRS & Outsourcing</option>
+      <option value="All 4 Panels">All 4 Panels</option>
+    </select>
+    <select name="diet" class="form-select mb-2">
+      <option value="">Dietary Preference</option>
+      <option>Vegetarian</option>
+      <option>Jain</option>
+      <option>Vegan</option>
+      <option>Other</option>
+    </select>
+    <textarea name="special" class="form-control" rows="3" placeholder="Special Requirements (Accessibility, etc.)"></textarea>
+  </div>
+
+  <!-- Terms -->
+  <div class="step">
+    <div class="form-check mb-3">
+      <input type="checkbox" name="terms" class="form-check-input" required>
+      <label class="form-check-label">
+        I agree to the <a href="/terms">Terms & Conditions</a> and <a href="/privacy">Privacy Policy</a>.
+      </label>
     </div>
-    <div class="mb-3">
-        <label>Email</label>
-        <input type="email" name="email" class="form-control" required>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div style="overflow:auto;">
+    <div style="float:right;">
+      <button type="button" id="prevBtn" onclick="nextPrev(-1)" class="btn btn-secondary">Previous</button>
+      <button type="button" id="nextBtn" onclick="nextPrev(1)" class="btn btn-success">Next</button>
     </div>
-    <div class="mb-3">
-        <label>Phone</label>
-        <input type="text" name="phone" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Institution</label>
-        <input type="text" name="institution" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Panel Preference</label>
-        <select name="panel" class="form-control" required>
-            <option value="">Select</option>
-            <option>Forensic Accounting & Beyond CA</option>
-            <option>IFRS and Outsourcing</option>
-            <option>All 4 Panels</option>
-        </select>
-    </div>
-    <button type="submit" class="btn btn-success">Submit</button>
+  </div>
+
 </form>
+
+<style>
+.step {display:none;}
+</style>
+
+<script>
+let currentTab = 0;
+showTab(currentTab);
+
+function showTab(n) {
+  let x = document.getElementsByClassName("step");
+  x[n].style.display = "block";
+  document.getElementById("prevBtn").style.display = n == 0 ? "none" : "inline";
+  document.getElementById("nextBtn").innerHTML = (n == (x.length - 1)) ? "Submit" : "Next";
+}
+
+function nextPrev(n) {
+  let x = document.getElementsByClassName("step");
+  if (n == 1 && !validateForm()) return false;
+  x[currentTab].style.display = "none";
+  currentTab = currentTab + n;
+  if (currentTab >= x.length) {
+    document.getElementById("regForm").submit();
+    return false;
+  }
+  showTab(currentTab);
+}
+
+function validateForm() {
+  let x = document.getElementsByClassName("step");
+  let y = x[currentTab].getElementsByTagName("input");
+  let z = x[currentTab].getElementsByTagName("select");
+  for (let i = 0; i < y.length; i++) {
+    if (y[i].hasAttribute("required") && y[i].value == "") {
+      y[i].classList.add("is-invalid");
+      return false;
+    }
+  }
+  for (let i = 0; i < z.length; i++) {
+    if (z[i].hasAttribute("required") && z[i].value == "") {
+      z[i].classList.add("is-invalid");
+      return false;
+    }
+  }
+  return true;
+}
+
+function updatePricing() {
+  document.getElementById("ticket_type").value = "";
+  document.getElementById("price_display").innerText = "0";
+  document.getElementById("price").value = "";
+}
+
+function updatePriceValue() {
+  let studentType = document.getElementById("student_type").value;
+  let ticketType = document.getElementById("ticket_type").value;
+  let price = 0;
+  if (ticketType.includes("Full Day")) {
+    price = (studentType === "Ahmedabad University Student") ? 400 : 500;
+  } else {
+    price = 300;
+  }
+  document.getElementById("price_display").innerText = price;
+  document.getElementById("price").value = price;
+}
+</script>
+
 {% endblock %}
